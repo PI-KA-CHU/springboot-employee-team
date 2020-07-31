@@ -7,6 +7,9 @@ public class EmployeeRequestDto {
     //TODO
     private Integer id;
 
+    public EmployeeRequestDto() {
+    }
+
     public EmployeeRequestDto(Integer age, String name, String gender, Integer company_id) {
         this.age = age;
         this.name = name;
