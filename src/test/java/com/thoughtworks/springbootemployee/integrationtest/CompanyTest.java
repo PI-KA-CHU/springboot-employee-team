@@ -56,7 +56,7 @@ public class CompanyTest {
 
     //TODO LIE
     @Test
-    void should_return_ok_when_get_companies_given_none() throws Exception {
+    void should_return_ok_when_get_companies_given_company_id_db() throws Exception {
         saveCompanyByName("oocl");
 
         mockMvc.perform(get("/companies"))

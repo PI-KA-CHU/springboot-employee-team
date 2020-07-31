@@ -4,8 +4,6 @@ package com.thoughtworks.springbootemployee.dto;
 import com.thoughtworks.springbootemployee.entity.Company;
 
 public class EmployeeRequestDto {
-    //TODO
-    private Integer id;
 
     public EmployeeRequestDto() {
     }
@@ -25,13 +23,6 @@ public class EmployeeRequestDto {
 
     private Integer company_id;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getAge() {
         return age;
