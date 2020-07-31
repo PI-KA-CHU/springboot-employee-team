@@ -13,9 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -59,9 +57,7 @@ public class CompanyTest {
     //TODO LIE
     @Test
     void should_return_ok_when_get_companies_given_none() throws Exception {
-        Company company1 = new Company();
-        company1.setName("oocl");
-        companyRepository.save(company1);
+        saveCompanyByName("oocl");
 
         mockMvc.perform(get("/companies"))
                 .andExpect(status().isOk());
@@ -69,9 +65,7 @@ public class CompanyTest {
 
     @Test
     void should_return_specific_company_when_get_company_by_id_given_companyId() throws Exception {
-        Company company1 = new Company();
-        company1.setName("tw");
-        companyRepository.save(company1);
+        saveCompanyByName("tw");
         List<Company> companies = companyRepository.findAll();
         int companyId = companies.get(0).getCompanyId();
 
@@ -82,9 +76,7 @@ public class CompanyTest {
 
     @Test
     void should_return_none_when_delete_company_by_id_given_company_id() throws Exception {
-        Company company1 = new Company();
-        company1.setName("tw");
-        companyRepository.save(company1);
+        saveCompanyByName("tw");
         List<Company> companies = companyRepository.findAll();
         int companyId = companies.get(0).getCompanyId();
 
@@ -97,9 +89,7 @@ public class CompanyTest {
     @Test
     void should_return_oocl_when_update_company_given_company_id_and_new_company_name() throws Exception {
 
-        Company company1 = new Company();
-        company1.setName("tw");
-        companyRepository.save(company1);
+        saveCompanyByName("tw");
 
         int companyId = 1;
         String companyName = "oocl";
@@ -122,8 +112,6 @@ public class CompanyTest {
 
         Employee employee = new Employee();
         employee.setName("Ellie");
-        employee.setAge(10);
-        employee.setGender("girl");
         employee.setCompany(company);
         employeeRepository.save(employee);
 
@@ -140,15 +128,9 @@ public class CompanyTest {
     void should_return_paged_companies_when_get_paged_companies_given_page_and_size() throws Exception {
         Integer page = 1;
         Integer size = 2;
-        Company company1 = new Company();
-        company1.setName("oocl");
-        companyRepository.save(company1);
-        Company company2 = new Company();
-        company2.setName("oocl");
-        companyRepository.save(company2);
-        Company company3 = new Company();
-        company3.setName("oocl");
-        companyRepository.save(company3);
+        saveCompanyByName("oocl");
+        saveCompanyByName("oocl");
+        saveCompanyByName("oocl");
 
         mockMvc.perform(get("/companies")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -187,5 +169,11 @@ public class CompanyTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(companyJsonStr))
                 .andExpect(status().isNotFound());
+    }
+
+    private void saveCompanyByName(String compantName) {
+        Company company = new Company();
+        company.setName(compantName);
+        companyRepository.save(company);
     }
 }
