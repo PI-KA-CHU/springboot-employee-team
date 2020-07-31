@@ -60,9 +60,7 @@ public class EmployeeTest {
 
     @Test
     void should_return_ok_when_get_employees_given_employee_id_db() throws Exception {
-        Company company = new Company();
-        company.setName("oocl");
-        companyRepository.save(company);
+        Company company = saveCompanyByName("oocl");
 
         saveEmployee(company, "Benjamin");
 
@@ -88,6 +86,25 @@ public class EmployeeTest {
                 .andExpect(jsonPath("$.length()").value(2));
     }
 
+    @Test
+    void should_return_2_employee_when_get_employee_page_given_page_1_size_2() throws Exception {
+        Integer page = 1;
+        Integer size = 2;
+        Company company = saveCompanyByName("oocl");
+        saveEmployee(company, "Benjamin");
+        saveEmployee(company, "LeBron");
+        saveEmployee(company, "Jim");
+
+        mockMvc.perform(get("/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("page", String.valueOf(page))
+                .param("size", String.valueOf(size))
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.length()").value(1));
+    }
+
+
     private void saveEmployee(Company company, String name) {
         Employee employee = new Employee();
         employee.setName(name);
@@ -95,11 +112,19 @@ public class EmployeeTest {
         employeeRepository.save(employee);
     }
 
+    private void saveEmployee(Company company, String name,String gender) {
+        Employee employee = new Employee();
+        employee.setName(name);
+        employee.setGender(gender);
+        employee.setCompany(company);
+        employeeRepository.save(employee);
+    }
 
-    private void saveCompanyByName(String companyName) {
+    private Company saveCompanyByName(String companyName) {
         Company company = new Company();
         company.setName(companyName);
         companyRepository.save(company);
+        return company;
     }
 
 }
