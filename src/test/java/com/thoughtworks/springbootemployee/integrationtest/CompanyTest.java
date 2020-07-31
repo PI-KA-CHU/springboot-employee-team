@@ -1,7 +1,9 @@
 package com.thoughtworks.springbootemployee.integrationtest;
 
 import com.thoughtworks.springbootemployee.entity.Company;
+import com.thoughtworks.springbootemployee.entity.Employee;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
+import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -29,6 +32,9 @@ public class CompanyTest {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @AfterEach
     void tearDown() {
@@ -47,7 +53,7 @@ public class CompanyTest {
                 .andExpect(status().isCreated());
         List<Company> companies = companyRepository.findAll();
         Assertions.assertEquals(1, companies.size());
-        Assertions.assertEquals("TW", companies.get(1).getName());
+        Assertions.assertEquals("TW", companies.get(0).getName());
     }
 
     //TODO LIE
@@ -63,10 +69,11 @@ public class CompanyTest {
 
     @Test
     void should_return_specific_company_when_get_company_by_id_given_companyId() throws Exception {
-        int companyId = 1;
         Company company1 = new Company();
         company1.setName("tw");
         companyRepository.save(company1);
+        List<Company> companies = companyRepository.findAll();
+        int companyId = companies.get(0).getCompanyId();
 
         mockMvc.perform(get("/companies/" + companyId))
                 .andExpect(status().isOk())
@@ -75,10 +82,11 @@ public class CompanyTest {
 
     @Test
     void should_return_none_when_delete_company_by_id_given_company_id() throws Exception {
-        int companyId = 1;
         Company company1 = new Company();
         company1.setName("tw");
         companyRepository.save(company1);
+        List<Company> companies = companyRepository.findAll();
+        int companyId = companies.get(0).getCompanyId();
 
         mockMvc.perform(delete("/companies/" + companyId))
                 .andExpect(status().isOk());
@@ -107,11 +115,24 @@ public class CompanyTest {
 
     @Test
     void should_2_employees_when_get_employees_by_company_id_given_company_id() throws Exception {
-        int companyId = 1;
+
+        Company company = new Company();
+        company.setName("tw");
+        companyRepository.save(company);
+
+        Employee employee = new Employee();
+        employee.setName("Ellie");
+        employee.setAge(10);
+        employee.setGender("girl");
+        employee.setCompany(company);
+        employeeRepository.save(employee);
+
+        Company companyQueried = companyRepository.findAll().get(0);
+        int companyId = companyQueried.getCompanyId();
+
         mockMvc.perform(get("/companies/" + companyId + "/employees"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
-
+                .andExpect(jsonPath("$.length()").value(1));
 
     }
 
