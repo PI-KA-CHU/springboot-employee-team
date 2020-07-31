@@ -16,8 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -115,6 +114,25 @@ public class EmployeeTest {
                 .param("gender", gender))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].gender").value(gender));
+    }
+
+    @Test
+    void should_return_new_name_employee_when_update_employee_given_employee_in_db_and_new_employee() throws Exception {
+        Company company = saveCompanyByName("tw");
+        saveEmployee(company, "LeBron");
+
+        int employeeId = employeeRepository.findAll().get(0).getId();
+
+        String companyJsonStr = "{\n" +
+                "      \"name\": \"Xiaohong\",\n" +
+                "      \"age\": 19,\n" +
+                "      \"gender\": \"Female\",\n" +
+                "      \"company_id\": \"1\"  \n" +
+                "    }";
+        mockMvc.perform(put("/employees/" + employeeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(companyJsonStr))
+                .andExpect(status().isOk());
     }
 
     private void saveEmployee(Company company, String name) {
