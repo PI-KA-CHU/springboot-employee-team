@@ -39,13 +39,16 @@ public class EmployeeTest {
 
     @Test
     void should_return_a_employee_when_add_employee_given_a_employee() throws Exception {
+        saveCompanyByName("oocl");
+        int companyId = companyRepository.findAll().get(0).getCompanyId();
+
         String employeeJsonStr = "{\n" +
                 "      \"name\": \"Xiaoming\",\n" +
                 "      \"age\": 20,\n" +
                 "      \"gender\": \"Male\",\n" +
-                "      \"company_id\": 1\n" +
+                "      \"company_id\": " + companyId + "\n" +
                 "}";
-        saveCompanyByName("oocl");
+
 
         mockMvc.perform(post("/employees/")
                 .contentType(MediaType.APPLICATION_JSON)
