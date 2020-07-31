@@ -104,6 +104,18 @@ public class EmployeeTest {
                 .andExpect(jsonPath("$.content.length()").value(1));
     }
 
+    @Test
+    void should_return_male_employees_when_get_employees_by_gender_given_1_male_employee_and_one_female_employee_and_gender_male() throws Exception {
+        String gender = "male";
+        Company company = saveCompanyByName("oocl");
+        saveEmployee(company, "LeBron", "male");
+        saveEmployee(company, "Ellie", "female");
+
+        mockMvc.perform(get("/employees")
+                .param("gender", gender))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].gender").value(gender));
+    }
 
     private void saveEmployee(Company company, String name) {
         Employee employee = new Employee();
