@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.web.JsonPath;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -133,6 +132,18 @@ public class EmployeeTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(companyJsonStr))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void should_return_none_when_delete_employee_given_1_employee_in_db_and_employee_id() throws Exception {
+        Company company = saveCompanyByName("oocl");
+        saveEmployee(company, "Benjamin");
+
+        int employeeId = employeeRepository.findAll().get(0).getId();
+        mockMvc.perform(delete("/employees/" + employeeId))
+                .andExpect(status().isOk());
+        List<Employee> employees = employeeRepository.findAll();
+        Assertions.assertEquals(0,employees.size());
     }
 
     private void saveEmployee(Company company, String name) {
