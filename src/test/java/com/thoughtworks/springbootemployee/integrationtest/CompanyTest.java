@@ -163,6 +163,29 @@ public class CompanyTest {
     void should_return_not_found_exception_when_get_company_by_id_given_company_id_1() throws Exception {
         int companyId = 1;
 
-        mockMvc.perform(get("/companies/" + companyId)).andExpect(status().isNotFound());
+        mockMvc.perform(get("/companies/" + companyId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_not_found_exception_when_delete_company_by_id_given_company_id_1() throws Exception {
+        int companyId = 1;
+
+        mockMvc.perform(delete("/companies/" + companyId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_not_found_exception_when_update_company_by_id_given_company_id_1() throws Exception {
+        int companyId = 1;
+        String companyName = "oocl";
+        String companyJsonStr = "{\n" +
+                " \"name\": \"" + companyName + "\"\n" +
+                "}";
+
+        mockMvc.perform(put("/companies/" + companyId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(companyJsonStr))
+                .andExpect(status().isNotFound());
     }
 }
