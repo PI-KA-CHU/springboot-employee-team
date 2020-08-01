@@ -19,14 +19,16 @@ public class WebExceptionHandler {
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = UnknownCompanyException.class)
-    public void unknownCompany(UnknownCompanyException ex) {
-        log.info(ex.getMsg() + "[id == " + ex.getCompanyId() + "]");
+    public String unknownCompany(UnknownCompanyException exception) {
+        log.info(exception.getMsg() + "[id == " + exception.getCompanyId() + "]");
+        return exception.getMsg();
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = UnknownEmployeeException.class)
-    public void unknownCompany(UnknownEmployeeException ex) {
-
+    public String unknownCompany(UnknownEmployeeException exception) {
+        log.info(exception.getErrorMsg() + "[id == " + exception.getEmployeeId() + "]");
+        return exception.getErrorMsg();
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
