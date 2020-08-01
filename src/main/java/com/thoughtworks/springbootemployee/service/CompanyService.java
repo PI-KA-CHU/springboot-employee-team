@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CompanyService {
     List<Company> findAllCompanies();
@@ -15,7 +14,7 @@ public interface CompanyService {
 
     void addCompany(Company company);
 
-    Optional<Company> findCompanyById(int companyId);
+    Company findCompanyById(int companyId);
 
     Company updateCompany(int companyId, Company company);
 
