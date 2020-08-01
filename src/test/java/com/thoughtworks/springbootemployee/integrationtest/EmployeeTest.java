@@ -149,6 +149,16 @@ public class EmployeeTest {
         Assertions.assertEquals(0,employees.size());
     }
 
+    @Test
+    void should_return_not_found_when_get_employee_given_employee_id_not_exist() throws Exception {
+        int employeeId = 1;
+
+        mockMvc.perform(get("/employees/"+employeeId))
+                .andExpect(status().isNotFound());
+    }
+
+
+
     private void saveEmployee(Company company, String name) {
         Employee employee = new Employee();
         employee.setName(name);

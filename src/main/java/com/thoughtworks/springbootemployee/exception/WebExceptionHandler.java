@@ -23,6 +23,12 @@ public class WebExceptionHandler {
         log.info(ex.getMsg() + "[id == " + ex.getCompanyId() + "]");
     }
 
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = UnknownEmployeeException.class)
+    public void unknownCompany(UnknownEmployeeException ex) {
+
+    }
+
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public @ResponseBody List<String> blandCompanyName(MethodArgumentNotValidException exception){
