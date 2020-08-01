@@ -146,14 +146,14 @@ public class EmployeeTest {
         mockMvc.perform(delete("/employees/" + employeeId))
                 .andExpect(status().isOk());
         List<Employee> employees = employeeRepository.findAll();
-        Assertions.assertEquals(0,employees.size());
+        Assertions.assertEquals(0, employees.size());
     }
 
     @Test
     void should_return_not_found_when_get_employee_given_employee_id_not_exist() throws Exception {
         int employeeId = 1;
 
-        mockMvc.perform(get("/employees/"+employeeId))
+        mockMvc.perform(get("/employees/" + employeeId))
                 .andExpect(status().isNotFound());
     }
 
@@ -161,7 +161,24 @@ public class EmployeeTest {
     void should_return_not_found_when_delete_employee_given_employee_id_not_exist() throws Exception {
         int employeeId = 1;
 
-        mockMvc.perform(delete("/employees/"+employeeId))
+        mockMvc.perform(delete("/employees/" + employeeId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_not_found_when_update_employee_given_employee_id_not_exist_and_new_employee() throws Exception {
+        int employeeId = 1;
+
+        String companyJsonStr = "{\n" +
+                "      \"name\": \"Xiaohong\",\n" +
+                "      \"age\": 19,\n" +
+                "      \"gender\": \"Female\",\n" +
+                "      \"company_id\": \"1\"  \n" +
+                "    }";
+
+        mockMvc.perform(put("/employees/" + employeeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(companyJsonStr))
                 .andExpect(status().isNotFound());
     }
 
@@ -172,7 +189,7 @@ public class EmployeeTest {
         employeeRepository.save(employee);
     }
 
-    private void saveEmployee(Company company, String name,String gender) {
+    private void saveEmployee(Company company, String name, String gender) {
         Employee employee = new Employee();
         employee.setName(name);
         employee.setGender(gender);
