@@ -41,15 +41,7 @@ public class EmployeeTest {
     void should_return_a_employee_when_add_employee_given_a_employee() throws Exception {
         saveCompanyByName("oocl");
         int companyId = companyRepository.findAll().get(0).getCompanyId();
-
-        String employeeJsonStr = "{\n" +
-                "      \"name\": \"Xiaoming\",\n" +
-                "      \"age\": 20,\n" +
-                "      \"gender\": \"Male\",\n" +
-                "      \"company_id\": " + companyId + "\n" +
-                "}";
-
-
+        String employeeJsonStr = getEmployeeJsonString(companyId, "male");
         mockMvc.perform(post("/employees/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(employeeJsonStr))
@@ -58,6 +50,7 @@ public class EmployeeTest {
         List<Employee> employeeQueried = employeeRepository.findAll();
         Assertions.assertEquals(1, employeeQueried.size());
     }
+
 
     @Test
     void should_return_ok_when_get_employees_given_employee_id_db() throws Exception {
@@ -125,15 +118,11 @@ public class EmployeeTest {
 
         int employeeId = employeeRepository.findAll().get(0).getId();
 
-        String companyJsonStr = "{\n" +
-                "      \"name\": \"Xiaohong\",\n" +
-                "      \"age\": 19,\n" +
-                "      \"gender\": \"Female\",\n" +
-                "      \"company_id\": \"1\"  \n" +
-                "    }";
+        String employeeJsonStr = getEmployeeJsonString(employeeId, "male");
+
         mockMvc.perform(put("/employees/" + employeeId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(companyJsonStr))
+                .content(employeeJsonStr))
                 .andExpect(status().isOk());
     }
 
@@ -169,17 +158,23 @@ public class EmployeeTest {
     void should_return_not_found_when_update_employee_given_employee_id_not_exist_and_new_employee() throws Exception {
         int employeeId = 1;
 
-        String companyJsonStr = "{\n" +
-                "      \"name\": \"Xiaohong\",\n" +
-                "      \"age\": 19,\n" +
-                "      \"gender\": \"Female\",\n" +
-                "      \"company_id\": \"1\"  \n" +
-                "    }";
+        String gender = "Female";
+
+        String employeeJsonStr = getEmployeeJsonString(employeeId, gender);
 
         mockMvc.perform(put("/employees/" + employeeId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(companyJsonStr))
+                .content(employeeJsonStr))
                 .andExpect(status().isNotFound());
+    }
+
+    private String getEmployeeJsonString(int employeeId, String gender) {
+        return "{\n" +
+                "      \"name\": \"Xiaohong\",\n" +
+                "      \"age\": 19,\n" +
+                "      \"gender\": \"" + gender + "\",\n" +
+                "      \"company_id\": \"" + employeeId + "\"  \n" +
+                "    }";
     }
 
     private void saveEmployee(Company company, String name) {
