@@ -6,6 +6,7 @@ import com.thoughtworks.springbootemployee.repository.CompanyRepository;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,6 +33,11 @@ public class EmployeeTest {
     @Autowired
     private CompanyRepository companyRepository;
 
+    @BeforeEach
+    void addCompanyInDb(){
+        saveCompanyByName("oocl");
+    }
+    
     @AfterEach
     void tearDown() {
         employeeRepository.deleteAll();
@@ -39,7 +45,7 @@ public class EmployeeTest {
 
     @Test
     void should_return_a_employee_when_add_employee_given_a_employee() throws Exception {
-        saveCompanyByName("oocl");
+        
         int companyId = companyRepository.findAll().get(0).getCompanyId();
         String employeeJsonStr = getEmployeeJsonString(companyId, "male");
         mockMvc.perform(post("/employees/")
@@ -54,7 +60,7 @@ public class EmployeeTest {
 
     @Test
     void should_return_ok_when_get_employees_given_employee_id_db() throws Exception {
-        Company company = saveCompanyByName("oocl");
+        Company company = companyRepository.findAll().get(0);
 
         saveEmployee(company, "Benjamin");
 
@@ -67,9 +73,7 @@ public class EmployeeTest {
 
     @Test
     void should_return_2_employees_when_get_employees_given_2_employee_id_db() throws Exception {
-        Company company = new Company();
-        company.setName("oocl");
-        companyRepository.save(company);
+        Company company = companyRepository.findAll().get(0);
 
         saveEmployee(company, "Benjamin");
         saveEmployee(company, "LeBron");
@@ -84,7 +88,7 @@ public class EmployeeTest {
     void should_return_2_employee_when_get_employee_page_given_page_1_size_2() throws Exception {
         Integer page = 1;
         Integer size = 2;
-        Company company = saveCompanyByName("oocl");
+        Company company = companyRepository.findAll().get(0);
         saveEmployee(company, "Benjamin");
         saveEmployee(company, "LeBron");
         saveEmployee(company, "Jim");
@@ -101,7 +105,7 @@ public class EmployeeTest {
     @Test
     void should_return_male_employees_when_get_employees_by_gender_given_1_male_employee_and_one_female_employee_and_gender_male() throws Exception {
         String gender = "male";
-        Company company = saveCompanyByName("oocl");
+        Company company = companyRepository.findAll().get(0);
         saveEmployee(company, "LeBron", "male");
         saveEmployee(company, "Ellie", "female");
 
@@ -113,7 +117,8 @@ public class EmployeeTest {
 
     @Test
     void should_return_new_name_employee_when_update_employee_given_employee_in_db_and_new_employee() throws Exception {
-        Company company = saveCompanyByName("tw");
+        Company company = companyRepository.findAll().get(0);
+
         saveEmployee(company, "LeBron");
 
         int employeeId = employeeRepository.findAll().get(0).getId();
@@ -128,7 +133,7 @@ public class EmployeeTest {
 
     @Test
     void should_return_none_when_delete_employee_given_1_employee_in_db_and_employee_id() throws Exception {
-        Company company = saveCompanyByName("oocl");
+        Company company = companyRepository.findAll().get(0);
         saveEmployee(company, "Benjamin");
 
         int employeeId = employeeRepository.findAll().get(0).getId();
@@ -192,11 +197,11 @@ public class EmployeeTest {
         employeeRepository.save(employee);
     }
 
-    private Company saveCompanyByName(String companyName) {
+    private void saveCompanyByName(String companyName) {
         Company company = new Company();
         company.setName(companyName);
         companyRepository.save(company);
-        return company;
+
     }
 
 }
