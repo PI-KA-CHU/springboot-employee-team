@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 public class EmployeeController {
-    @Autowired
+
     private final EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
@@ -30,10 +30,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees/{employeeId}")
-    public Optional<Employee> findEmployeeById(@PathVariable int employeeId) {
-        if(!employeeService.findEmployeeById(employeeId).isPresent()){
-            throw new UnknownEmployeeException(employeeId,"Find employee by id failed! Not found!");
-        }
+    public Employee findEmployeeById(@PathVariable int employeeId) {
         return employeeService.findEmployeeById(employeeId);
     }
 
@@ -55,17 +52,11 @@ public class EmployeeController {
 
     @PutMapping("/employees/{employeeId}")
     public Employee updateEmployee(@PathVariable int employeeId, @RequestBody EmployeeRequestDto employeeRequestDto) {
-        if(!employeeService.findEmployeeById(employeeId).isPresent()){
-            throw new UnknownEmployeeException(employeeId,"Update employee by id failed! Not found!");
-        }
         return employeeService.updateEmployee(employeeId, employeeRequestDto);
     }
 
     @DeleteMapping("/employees/{employeeId}")
     public void deleteEmployeeById(@PathVariable int employeeId) {
-        if(!employeeService.findEmployeeById(employeeId).isPresent()){
-            throw new UnknownEmployeeException(employeeId,"Delete employee by id failed! Not found!");
-        }
         employeeService.deleteEmployeeById(employeeId);
     }
 }

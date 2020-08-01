@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface EmployeeService {
     List<Employee> findAllEmployees();
 
-    Optional<Employee> findEmployeeById(int employeeId);
+    Employee findEmployeeById(int employeeId);
 
     void addEmployee(EmployeeRequestDto employeeRequestDto);
 
