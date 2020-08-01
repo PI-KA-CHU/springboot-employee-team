@@ -3,6 +3,7 @@ package com.thoughtworks.springbootemployee.service;
 import com.thoughtworks.springbootemployee.dto.EmployeeRequestDto;
 import com.thoughtworks.springbootemployee.entity.Company;
 import com.thoughtworks.springbootemployee.entity.Employee;
+import com.thoughtworks.springbootemployee.exception.UnknownCompanyException;
 import com.thoughtworks.springbootemployee.exception.UnknownEmployeeException;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
@@ -17,11 +18,11 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final CompanyRepository companyRepository;
+    private final CompanyService companyService;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, CompanyRepository companyRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, CompanyService companyService) {
         this.employeeRepository = employeeRepository;
-        this.companyRepository = companyRepository;
+        this.companyService = companyService;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private void toEmployeeEntity(EmployeeRequestDto employeeRequestDto, Employee employee) {
-        Company company = companyRepository.findById(employeeRequestDto.getCompany_id()).get();
+        Company company = companyService.findCompanyById(employeeRequestDto.getCompany_id());
         employee.setCompany(company);
         employee.setName(employeeRequestDto.getName());
         employee.setGender(employeeRequestDto.getGender());
@@ -54,15 +55,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee updateEmployee(int employeeId, EmployeeRequestDto employeeRequestDto) {
         Employee employee = employeeRepository
                 .findById(employeeId)
-                .orElseThrow(() -> new UnknownEmployeeException(employeeId,"Update employee by id failed! Not found!"));
+                .orElseThrow(() -> new UnknownEmployeeException(employeeId,"EmployeeId id error! Not found!"));
         toEmployeeEntity(employeeRequestDto, employee);
         return employeeRepository.save(employee);
     }
 
     @Override
     public void deleteEmployeeById(int employeeId) {
-        employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new UnknownEmployeeException(employeeId, "Delete employee by id failed! Not found!"));
+        throwExceptionIfEmployeeNotExit(employeeId);
         employeeRepository.deleteById(employeeId);
     }
 
@@ -71,12 +71,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findAll(pageable);
     }
 
-    //TODO
     @Override
     public List<Employee> findEmployeesByGender(String gender) {
-        return employeeRepository.findAll()
-                .stream()
-                .filter(employee -> employee.getGender().equals(gender))
-                .collect(Collectors.toList());
+        return employeeRepository.findByGender(gender);
+    }
+
+    private void throwExceptionIfEmployeeNotExit(int employeeId) {
+        employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new UnknownCompanyException(employeeId,"EmployeeId id error! Not found!"));
     }
 }
